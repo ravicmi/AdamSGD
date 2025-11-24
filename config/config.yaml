@@ -1,0 +1,135 @@
+# Configuration for Adam Paper Experiments Replication
+# Based on Section 6 of "Adam: A Method for Stochastic Optimization"
+
+# Device configuration
+device:
+  use_mps: true  # Use Apple Silicon GPU acceleration
+  use_cuda: false
+
+# Experiment mode: 'fast' for quick iteration, 'full' for paper-matching experiments
+mode: 'fast'  # Options: 'fast' or 'full'
+
+# Fast mode settings (for quick iteration)
+fast:
+  epochs:
+    logistic_regression: 10
+    mlp: 20
+    cnn: 30
+    advanced: 20
+  batch_size: 128
+  num_workers: 2
+
+# Full mode settings (matching paper experiments)
+full:
+  epochs:
+    logistic_regression: 100
+    mlp: 100
+    cnn: 200
+    advanced: 100
+  batch_size: 128
+  num_workers: 4
+
+# Adam optimizer hyperparameters (from paper)
+adam:
+  lr: 0.001          # α: Step size
+  beta1: 0.9         # β₁: Exponential decay rate for 1st moment
+  beta2: 0.999       # β₂: Exponential decay rate for 2nd moment
+  epsilon: 1.0e-8    # ε: Small constant for numerical stability
+
+# SGD optimizer hyperparameters
+sgd:
+  lr: 0.01
+  momentum: 0.0
+  nesterov: false
+
+# SGD with Momentum optimizer hyperparameters
+sgd_momentum:
+  lr: 0.01
+  momentum: 0.9
+  nesterov: false
+
+# AdaGrad optimizer hyperparameters
+adagrad:
+  lr: 0.01
+  lr_decay: 0.0
+  epsilon: 1.0e-8
+
+# RMSProp optimizer hyperparameters
+rmsprop:
+  lr: 0.001
+  alpha: 0.99        # Smoothing constant
+  epsilon: 1.0e-8
+  momentum: 0.0
+
+# Model architectures
+models:
+  logistic_regression:
+    input_size: 784   # 28x28 MNIST
+    num_classes: 10
+  
+  mlp:
+    input_size: 784
+    hidden_sizes: [1000, 1000]  # 2 hidden layers as per paper experiments
+    num_classes: 10
+    dropout: 0.5
+  
+  cnn:
+    num_classes: 10   # CIFAR-10
+    # Simple CNN architecture
+    conv_channels: [32, 64, 128]
+    fc_hidden: 512
+    dropout: 0.5
+
+# Dataset settings
+datasets:
+  mnist:
+    data_dir: './data/mnist'
+    normalize_mean: [0.1307]
+    normalize_std: [0.3081]
+    train_val_split: 0.9
+  
+  cifar10:
+    data_dir: './data/cifar10'
+    normalize_mean: [0.4914, 0.4822, 0.4465]
+    normalize_std: [0.2023, 0.1994, 0.2010]
+    train_val_split: 0.9
+    data_augmentation: true
+
+# Training settings
+training:
+  seed: 42
+  log_interval: 100      # Log every N batches
+  save_checkpoints: true
+  checkpoint_dir: './checkpoints'
+  
+# Plotting settings
+plotting:
+  dpi: 300
+  figsize: [10, 6]
+  style: 'seaborn-v0_8-darkgrid'
+  save_format: 'png'
+  colors:
+    adam: '#1f77b4'
+    sgd: '#ff7f0e'
+    sgd_momentum: '#2ca02c'
+    adagrad: '#d62728'
+    rmsprop: '#9467bd'
+
+# Experiment-specific settings
+experiments:
+  exp_6_1:
+    name: 'Logistic Regression on MNIST'
+    optimizers: ['adam', 'sgd', 'sgd_momentum', 'adagrad', 'rmsprop']
+    
+  exp_6_2:
+    name: 'Multi-layer Neural Network on MNIST'
+    optimizers: ['adam', 'sgd_momentum', 'adagrad', 'rmsprop']
+    
+  exp_6_3:
+    name: 'Convolutional Neural Network on CIFAR-10'
+    optimizers: ['adam', 'sgd_momentum', 'adagrad', 'rmsprop']
+    
+  exp_6_4:
+    name: 'Advanced Experiments'
+    optimizers: ['adam', 'sgd_momentum', 'rmsprop']
+
